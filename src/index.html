@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenID Warp Demo</title>
+    <style>
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>OpenID Warp Demo</h1>
+    <div id="unauthorized" class="hide">
+        <a href="/oauth2/authorization/oidc">login</a>
+    </div>
+    <div id="authorized" class="hide">
+        <div id="email"></div>
+        <img id="img"></img>
+    </div>
+    <script>
+        fetch("/api/account").then((response) => {
+            if (response.status === 401) {
+                document.getElementById("unauthorized").classList.remove("hide");
+                throw "Unauthorized";
+            }
+            return response.json();
+        }).then((json) => {
+            document.getElementById("email").innerHTML = json.email;
+            document.getElementById("img").src = json.imageUrl;
+            document.getElementById("authorized").classList.remove("hide");
+        });
+    </script>
+</body>
+
+</html>
