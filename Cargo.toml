@@ -17,7 +17,7 @@ repository = "https://github.com/kilork/openid-examples"
 anyhow = "1.0"
 cookie = "0.14"
 log = "0.4"
-openid = { path = "../../openid" }
+openid = "0.8"
 pretty_env_logger = "0.4"
 reqwest = "0.11"
 serde = { version = "1", features = [ "derive" ] }
