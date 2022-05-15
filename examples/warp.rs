@@ -25,9 +25,10 @@ async fn main() -> anyhow::Result<()> {
     }
     pretty_env_logger::init();
 
-    let client_id = env::var("CLIENT_ID").unwrap_or("<client id>".to_string());
-    let client_secret = env::var("CLIENT_SECRET").unwrap_or("<client secret>".to_string());
-    let issuer_url = env::var("ISSUER").unwrap_or("https://accounts.google.com".to_string());
+    let client_id = env::var("CLIENT_ID").expect("<client id> for your provider");
+    let client_secret = env::var("CLIENT_SECRET").expect("<client secret> for your provider");
+    let issuer_url =
+        env::var("ISSUER").unwrap_or_else(|_| "https://accounts.google.com".to_string());
     let redirect = Some(host("/login/oauth2/code/oidc"));
     let issuer = reqwest::Url::parse(&issuer_url)?;
 
@@ -85,9 +86,9 @@ async fn request_token(
 ) -> anyhow::Result<Option<(Token, Userinfo)>> {
     let mut token: Token = oidc_client.request_token(&login_query.code).await?.into();
 
-    if let Some(mut id_token) = token.id_token.as_mut() {
-        oidc_client.decode_token(&mut id_token)?;
-        oidc_client.validate_token(&id_token, None, None)?;
+    if let Some(id_token) = token.id_token.as_mut() {
+        oidc_client.decode_token(id_token)?;
+        oidc_client.validate_token(id_token, None, None)?;
         info!("token: {:?}", id_token);
     } else {
         return Ok(None);
@@ -166,7 +167,7 @@ async fn reply_login(
 }
 
 async fn reply_authorize(oidc_client: Arc<OpenIDClient>) -> Result<impl warp::Reply, Infallible> {
-    let origin_url = env::var("ORIGIN").unwrap_or(host(""));
+    let origin_url = env::var("ORIGIN").unwrap_or_else(|_| host(""));
 
     let auth_url = oidc_client.auth_url(&Options {
         scope: Some("openid email profile".into()),
@@ -176,7 +177,7 @@ async fn reply_authorize(oidc_client: Arc<OpenIDClient>) -> Result<impl warp::Re
 
     info!("authorize: {}", auth_url);
 
-    let url = auth_url.into_string();
+    let url: String = auth_url.into();
 
     Ok(warp::reply::with_header(
         StatusCode::FOUND,
@@ -229,5 +230,5 @@ async fn handle_rejections(err: Rejection) -> Result<impl Reply, Infallible> {
 /// For DEV environment with WebPack this is usually something like `http://localhost:9000`.
 /// We are using `http://localhost:8080` in all-in-one example.
 pub fn host(path: &str) -> String {
-    env::var("REDIRECT_URL").unwrap_or("http://localhost:8080".to_string()) + path
+    env::var("REDIRECT_URL").unwrap_or_else(|_| "http://localhost:8080".to_string()) + path
 }

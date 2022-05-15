@@ -19,7 +19,6 @@
     </div>
     <div id="authorized" class="hide">
         <div id="email"></div>
-        <img id="img"></img>
     </div>
     <script>
         fetch("/api/account").then((response) => {
@@ -30,7 +29,6 @@
             return response.json();
         }).then((json) => {
             document.getElementById("email").innerHTML = json.email;
-            document.getElementById("img").src = json.imageUrl;
             document.getElementById("authorized").classList.remove("hide");
         });
     </script>

@@ -2,7 +2,7 @@
 name = "openid-examples"
 version = "0.1.0"
 authors = ["Alexander Korolev <alexander.korolev.germany@gmail.com>"]
-edition = "2018"
+edition = "2021"
 categories = []
 description = """
 openid-examples demo collection.
@@ -15,12 +15,12 @@ repository = "https://github.com/kilork/openid-examples"
 
 [dependencies]
 anyhow = "1.0"
-cookie = "0.15"
+cookie = "0.16"
 log = "0.4"
-openid = "0.9"
+openid = "0.10"
 pretty_env_logger = "0.4"
 reqwest = "0.11"
 serde = { version = "1", features = [ "derive" ] }
 tokio = { version = "1", features = [ "full" ] }
-uuid = { version = "0.8", features = [ "v4" ] }
+uuid = { version = "1.0", features = [ "v4" ] }
 warp = "0.3"
