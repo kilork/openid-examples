@@ -6,6 +6,10 @@ You need to define two environment variables `CLIENT_ID` and `CLIENT_SECRET`.
 
 If you want to try another OpenID provider - additionally define `ISSUER` environment variable.
 
+To change the address where the app listens for connections, use the environment variable `LISTEN`.
+
+The variable `REDIRECT_URL` defines the initial part of the url where we listen for connections, in general this is `http://${LISTEN}`.
+
 ## Legal
 
 Dual-licensed under `MIT` or the [UNLICENSE](http://unlicense.org/).

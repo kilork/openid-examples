@@ -1,4 +1,4 @@
-use std::{convert::Infallible, env, sync::Arc};
+use std::{convert::Infallible, env, net::SocketAddr, sync::Arc};
 
 use log::{error, info};
 use openid::{Client, Discovered, DiscoveredClient, Options, StandardClaims, Token, Userinfo};
@@ -26,17 +26,27 @@ async fn main() -> anyhow::Result<()> {
     pretty_env_logger::init();
 
     let client_id = env::var("CLIENT_ID").expect("<client id> for your provider");
-    let client_secret = env::var("CLIENT_SECRET").expect("<client secret> for your provider");
+    let client_secret = env::var("CLIENT_SECRET").ok();
     let issuer_url =
         env::var("ISSUER").unwrap_or_else(|_| "https://accounts.google.com".to_string());
     let redirect = Some(host("/login/oauth2/code/oidc"));
     let issuer = reqwest::Url::parse(&issuer_url)?;
+    let listen: SocketAddr = env::var("LISTEN")
+        .unwrap_or_else(|_| "127.0.0.1:8080".to_string())
+        .parse()?;
 
     eprintln!("redirect: {:?}", redirect);
     eprintln!("issuer: {}", issuer);
 
-    let client =
-        Arc::new(DiscoveredClient::discover(client_id, client_secret, redirect, issuer).await?);
+    let client = Arc::new(
+        DiscoveredClient::discover(
+            client_id,
+            client_secret.unwrap_or_default(),
+            redirect,
+            issuer,
+        )
+        .await?,
+    );
 
     eprintln!("discovered config: {:?}", client.config());
 
@@ -75,7 +85,7 @@ async fn main() -> anyhow::Result<()> {
 
     let logged_routes = routes.with(warp::log("openid_warp_example"));
 
-    warp::serve(logged_routes).run(([127, 0, 0, 1], 8080)).await;
+    warp::serve(logged_routes).run(listen).await;
 
     Ok(())
 }

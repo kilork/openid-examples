@@ -19,6 +19,7 @@
     </div>
     <div id="authorized" class="hide">
         <div id="email"></div>
+        <div><pre id="userinfo"></pre></div>
     </div>
     <script>
         fetch("/api/account").then((response) => {
@@ -29,7 +30,10 @@
             return response.json();
         }).then((json) => {
             document.getElementById("email").innerHTML = json.email;
+            document.getElementById("userinfo").innerHTML = JSON.stringify(json, null, 2);
             document.getElementById("authorized").classList.remove("hide");
+        }).catch((err) => {
+            console.log(err);
         });
     </script>
 </body>
