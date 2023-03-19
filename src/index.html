@@ -20,18 +20,19 @@
     <div id="authorized" class="hide">
         <div id="email"></div>
         <div><pre id="userinfo"></pre></div>
+        <div><a id="logout" href="/logout">logout</a></div>
     </div>
     <script>
         fetch("/api/account").then((response) => {
             if (response.status === 401) {
-                document.getElementById("unauthorized").classList.remove("hide");
+                unauthorized.classList.remove("hide");
                 throw "Unauthorized";
             }
             return response.json();
         }).then((json) => {
-            document.getElementById("email").innerHTML = json.email;
-            document.getElementById("userinfo").innerHTML = JSON.stringify(json, null, 2);
-            document.getElementById("authorized").classList.remove("hide");
+            email.innerHTML = json.email;
+            userinfo.innerHTML = JSON.stringify(json, null, 2);
+            authorized.classList.remove("hide");
         }).catch((err) => {
             console.log(err);
         });
