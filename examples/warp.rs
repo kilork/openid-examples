@@ -1,16 +1,12 @@
-use std::{collections::HashMap, convert::Infallible, env, net::SocketAddr, sync::Arc};
+use std::{convert::Infallible, env, net::SocketAddr, sync::Arc};
 
 use cookie::time::Duration;
 use log::{error, info};
-use openid::{
-    Client, Discovered, DiscoveredClient, Options, StandardClaims, StandardClaimsSubject, Token,
-    Userinfo,
-};
+use openid::{Client, Discovered, DiscoveredClient, Options, StandardClaims, Token, Userinfo};
 use openid_examples::{
     entity::{LoginQuery, Sessions, User},
     INDEX_HTML,
 };
-use serde::Deserialize;
 use tokio::sync::RwLock;
 use warp::{
     http::{Response, StatusCode},
