@@ -24,3 +24,8 @@ export CLIENT_SECRET=<your google client secret>
 cargo run --example=warp
 ```
 
+## Development
+
+```bash
+git push -u origin `git branch --show-current`
+```
