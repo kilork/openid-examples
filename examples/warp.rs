@@ -19,6 +19,8 @@ const EXAMPLE_COOKIE: &str = "openid_warp_example";
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    dotenv::dotenv().ok();
+
     pretty_env_logger::init();
 
     let client_id = env::var("CLIENT_ID").expect("<client id> for your provider");
@@ -140,10 +142,10 @@ async fn reply_login(
                 authorities: vec!["ROLE_USER".to_string()],
             };
 
-            let authorization_cookie = ::cookie::Cookie::build(EXAMPLE_COOKIE, &id)
+            let authorization_cookie = ::cookie::Cookie::build((EXAMPLE_COOKIE, &id))
                 .path("/")
                 .http_only(true)
-                .finish()
+                .build()
                 .to_string();
 
             sessions
@@ -193,11 +195,11 @@ async fn reply_logout(
     let session_removed = sessions.write().await.map.remove(&id);
 
     if let Some(id_token) = session_removed.and_then(|(_, token, _)| token.bearer.id_token) {
-        let authorization_cookie = ::cookie::Cookie::build(EXAMPLE_COOKIE, &id)
+        let authorization_cookie = ::cookie::Cookie::build((EXAMPLE_COOKIE, &id))
             .path("/")
             .http_only(true)
             .max_age(Duration::seconds(-1))
-            .finish()
+            .build()
             .to_string();
 
         let return_redirect_url = host("/");
