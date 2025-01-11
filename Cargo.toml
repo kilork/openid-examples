@@ -29,4 +29,4 @@ uuid = { version = "1.0", default-features = false, features = [ "v4" ] }
 warp = { version = "0.3", default-features = false }
 
 [patch.crates-io]
-openid = { path = "../../github.com/kilork/openid" }
+openid = { path = "../openid" }

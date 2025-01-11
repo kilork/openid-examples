@@ -863,6 +863,8 @@ checksum = "3fdb12b2476b595f9358c5161aa467c2438859caa136dec86c26fdd2efe17b92"
 [[package]]
 name = "openid"
 version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "627898ab5b3fff5e5f1dc0e404bafdbb87a4337d815e86149f53640380946ccc"
 dependencies = [
  "base64 0.22.0",
  "biscuit",
@@ -1950,3 +1952,7 @@ dependencies = [
  "cfg-if",
  "windows-sys 0.48.0",
 ]
+
+[[patch.unused]]
+name = "openid"
+version = "0.16.0"
