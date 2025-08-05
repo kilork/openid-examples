@@ -2,15 +2,17 @@ use std::{convert::Infallible, env, net::SocketAddr, sync::Arc};
 
 use cookie::time::Duration;
 use log::{error, info};
-use openid::{Client, Discovered, DiscoveredClient, Options, StandardClaims, Token, Userinfo};
-use openid_examples::{
-    entity::{LoginQuery, Sessions, User},
-    INDEX_HTML,
-};
 use tokio::sync::RwLock;
 use warp::{
+    Filter, Rejection, Reply,
     http::{Response, StatusCode},
-    reject, Filter, Rejection, Reply,
+    reject,
+};
+
+use openid::{Client, Discovered, DiscoveredClient, Options, StandardClaims, Token, Userinfo};
+use openid_examples::{
+    INDEX_HTML,
+    entity::{LoginQuery, Sessions, User},
 };
 
 type OpenIDClient = Client<Discovered, StandardClaims>;
@@ -33,8 +35,8 @@ async fn main() -> anyhow::Result<()> {
         .unwrap_or_else(|_| "127.0.0.1:8080".to_string())
         .parse()?;
 
-    info!("redirect: {:?}", redirect);
-    info!("issuer: {}", issuer);
+    info!("redirect: {redirect:?}");
+    info!("issuer: {issuer}");
 
     let client = Arc::new(
         DiscoveredClient::discover(
@@ -105,14 +107,14 @@ async fn request_token(
     if let Some(id_token) = token.id_token.as_mut() {
         oidc_client.decode_token(id_token)?;
         oidc_client.validate_token(id_token, None, None)?;
-        info!("token: {:?}", id_token);
+        info!("token: {id_token:?}");
     } else {
         return Ok(None);
     }
 
     let userinfo = oidc_client.request_userinfo(&token).await?;
 
-    info!("user info: {:?}", userinfo);
+    info!("user info: {userinfo:?}");
 
     Ok(Some((token, userinfo)))
 }
@@ -169,7 +171,7 @@ async fn reply_login(
             response_unauthorized()
         }
         Err(err) => {
-            error!("login error in call: {:?}", err);
+            error!("login error in call: {err:?}");
 
             response_unauthorized()
         }
@@ -239,7 +241,7 @@ async fn reply_authorize(oidc_client: Arc<OpenIDClient>) -> Result<impl warp::Re
         ..Default::default()
     });
 
-    info!("authorize: {}", auth_url);
+    info!("authorize: {auth_url}");
 
     let url: String = auth_url.into();
 
