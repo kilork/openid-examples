@@ -133,7 +133,7 @@ async fn reply_login(
             let email = user_info.email.clone();
 
             let user = User {
-                id: user_info.sub.clone().unwrap_or_default(),
+                id: user_info.sub.clone(),
                 login,
                 last_name: user_info.family_name.clone(),
                 first_name: user_info.name.clone(),
